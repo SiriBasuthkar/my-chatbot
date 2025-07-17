@@ -2,8 +2,11 @@
     flex: 1;
     min-height: 100vh;
     padding-bottom: 15vh;
+    flex-direction: column;
     position: relative;
     background-color: #ffffff;
+    overflow-y: auto;
+    
   }
   
   .main .nav {
@@ -107,7 +110,8 @@
     background-color: transparent;
     font-size: 16px;
     color: #585858;
-    padding: 8px 0;
+    padding: 8px;
+    position: static;
   }
   
   .search-box div {
@@ -167,4 +171,10 @@
   background: transparent;
   outline: none;
   font-size: 16px;
+}
+.response-box {
+  margin-top: 1rem;
+  white-space: pre-line;
+  line-height: 1.5;
+  word-wrap: break-word;
 }

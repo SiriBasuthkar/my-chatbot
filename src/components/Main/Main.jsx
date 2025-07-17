@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState , useRef, useEffect} from 'react';
 import './Main.css';
 import { assets } from '../../assets/assets.js';
 import axios from 'axios';
@@ -12,6 +12,14 @@ const Main = () => {
   const [response, setResponse] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+const responseRef = useRef();
+
+useEffect(() => {
+  if (responseRef.current) {
+    responseRef.current.scrollIntoView({ behavior: "smooth" });
+  }
+}, [response]);
+
 
   const handleSend = async () => {
     if (!question.trim()) return;
@@ -23,18 +31,12 @@ const Main = () => {
       const response = await axios.post(
         "https://api.groq.com/openai/v1/chat/completions",
         {
-          model: "llama3-70b-8192", 
+          model: "llama3-70b-8192",
           messages: [
-            {
-              role: "system",
-              content: "You are a helpful assistant."
-            },
-            {
-              role: "user",
-              content: question
-            }
+            { role: "system", content: "You are a helpful assistant." },
+            { role: "user", content: question }
           ],
-          temperature: 0.7 
+          temperature: 0.7
         },
         {
           headers: {
@@ -45,12 +47,14 @@ const Main = () => {
       );
   
       setResponse(response.data.choices[0].message.content);
+      setQuestion("");  
     } catch (error) {
       console.error("API Error:", error.response?.data || error.message);
       setError(error.response?.data?.error?.message || "Failed to get response");
     } finally {
       setIsLoading(false);
     }
+  
   };
   const handleKeyDown = (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -95,33 +99,30 @@ const Main = () => {
       </div>
     </div>
   ) : (
-    <div className="response-box">
-      <p className='response-text'>{response}</p>
-    </div>
+    <div className="response-box" ref={responseRef}>
+  <h2>AI Assistant Says:</h2>
+  {response.split('\n').map((line, index) => (
+    <p key={index}>{line}</p>
+  ))}
+</div>
+
   )}
 
   
 
-{response && (
-    <div className="response-box">
-      <button onClick={() => setResponse("")} className="back-button">
-        Back to suggestions
-      </button>
-    </div>
-  )}
 
   {/* Fixed position textarea */}
   <div className="main-bottom">
     <div className="search-box">
-    <div className="search-box">
+  
       <input
         type="text"
         value={question}
         placeholder="Ask me anything..."
         onChange={(e) => setQuestion(e.target.value)}
-        onClick={handleKeyDown}
+        onKeyDown={handleKeyDown}
       />
-    </div>
+    
       <div>
         <img src={assets.gallery_icon} alt="attach file" />
         <img src={assets.mic_icon} alt="voice input" />

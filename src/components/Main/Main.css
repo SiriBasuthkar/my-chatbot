@@ -118,6 +118,7 @@
     display: flex;
     align-items: center;
     gap: 15px;
+    position: static;
   }
   
   .search-box img {
